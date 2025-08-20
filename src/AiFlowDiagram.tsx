@@ -31,9 +31,9 @@ type NodeDef = {
 };
 
 // Durations (seconds)
-const T_NODE = 0.6; // node fade-in
-const T_SEG = 1.2; // line segment
-const GAP = 0.15;
+const T_NODE = 0.3; // node fade-in
+const T_SEG = 0.6; // line segment
+const GAP = 0.075;
 
 const baseLine = {
   stroke: "#ffffff",
@@ -216,9 +216,9 @@ export default function AiFlowDiagram() {
   // Processing→Analyzing: vertical leg at PR.x from PR.y to AN.y
   const PtoA_vert = {
     x1: PR.x + 55, // Start more to the left of Processing node
-    y1: AN.y - HALF_H,// Start even lower to make line shorter from top
+    y1: PR.y + HALF_H + 45, // Start from bottom of Processing node
     x2: PR.x + 55, // End more to the left of Analyzing node
-    y2:  PR.y + HALF_H + 45, // End at top edge of Analyzing node
+    y2: AN.y - HALF_H, // End at top edge of Analyzing node
   };
 
   // Agent→Analyzing: horizontal at y=AN.y from AG.x to AN.x
@@ -346,12 +346,65 @@ export default function AiFlowDiagram() {
           transition={{ duration: T_SEG, delay: t6_agent_right_start, ease: "easeInOut" }}
         />
 
-        {/* corner dots (work in progress) */}
-        {[
-          [PR.y + HALF_H , PR.x + 30],
-        ].map(([cx, cy], i) => (
-          <circle key={i} cx={cx} cy={cy} r={3} fill="#fff" opacity={0.9} />
-        ))}
+        {/* Dot at end of line 2 (Agent to Processing horizontal line) */}
+        <motion.circle
+          cx={AtoP_horz.x2}
+          cy={AtoP_horz.y2}
+          r={3}
+          fill="#fff"
+          opacity={0.9}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 0.9 }}
+          transition={{ delay: t3_proc_in, duration: 0.3, ease: "easeOut" }}
+        />
+        
+        {/* Dot at end of line 3 (Processing to Analyzing vertical line) */}
+        <motion.circle
+          cx={PtoA_vert.x2}
+          cy={PtoA_vert.y2}
+          r={3}
+          fill="#fff"
+          opacity={0.9}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 0.9 }}
+          transition={{ delay: t5_an_in, duration: 0.3, ease: "easeOut" }}
+        />
+        
+        {/* Dot at end of line 4 (Agent to Analyzing horizontal line) */}
+        <motion.circle
+          cx={AtoA_horz.x2}
+          cy={AtoA_horz.y2}
+          r={3}
+          fill="#fff"
+          opacity={0.9}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 0.9 }}
+          transition={{ delay: t5_an_in, duration: 0.3, ease: "easeOut" }}
+        />
+        
+        {/* Dot at end of line 5 (Analyzing to Report vertical line) */}
+        <motion.circle
+          cx={AtoR_vert.x2}
+          cy={AtoR_vert.y2}
+          r={3}
+          fill="#fff"
+          opacity={0.9}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 0.9 }}
+          transition={{ delay: t7_rep_in, duration: 0.3, ease: "easeOut" }}
+        />
+        
+        {/* Dot at end of line 7 (Agent to Report horizontal line) */}
+        <motion.circle
+          cx={AtoR_horz_fromAgent.x2}
+          cy={AtoR_horz_fromAgent.y2}
+          r={3}
+          fill="#fff"
+          opacity={0.9}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 0.9 }}
+          transition={{ delay: t7_rep_in, duration: 0.3, ease: "easeOut" }}
+        />
       </svg>
 
       {/* Nodes (GIFs + labels) with anchored placement */}
