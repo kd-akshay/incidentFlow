@@ -1,4 +1,4 @@
-import  { useMemo, useRef, useLayoutEffect, useState } from "react";
+import  { useMemo, useRef, useLayoutEffect, useState, memo } from "react";
 import { motion } from "framer-motion";
 // import agentgif from '../assets/AgentStart.gif'
 
@@ -59,6 +59,7 @@ export default function AiFlowDiagram() {
   useLayoutEffect(() => {
     if (!ref.current) return;
     const el = ref.current;
+    setSize({ w: el.clientWidth, h: el.clientHeight });
     const ro = new ResizeObserver(() => {
       setSize({ w: el.clientWidth, h: el.clientHeight });
     });
@@ -67,7 +68,7 @@ export default function AiFlowDiagram() {
   }, []);
 
   // Define nodes with anchors (change these anchors later; lines adapt)
-  const nodes: NodeDef[] = [
+  const nodes: NodeDef[] = useMemo(() => ([
     {
       key: "AGENT",
       label: "Agent Started",
@@ -100,7 +101,7 @@ export default function AiFlowDiagram() {
       dx: -108, 
       dy: -60, 
     },
-  ];
+  ]), []);
 
   // Compute absolute coordinates for each anchor
   const coords = useMemo(() => {
@@ -194,8 +195,8 @@ export default function AiFlowDiagram() {
 
   // Helpers to derive oriented segments from current positions:
   // Agent→Processing: vertical leg from AG.y to PR.y, but x at AG.x
-  const distanceX = Math.abs(PR.x - AG.x);
-  const distanceY = Math.abs(PR.y - AG.y);
+
+
   
   // If nodes are too close, adjust the line path
   const AtoP_vert = {
@@ -424,7 +425,7 @@ type NodeProps = {
   delay: number;
 };
 
-function Node({ label, img, x, y, delay }: NodeProps) {
+const Node = memo(function Node({ label, img, x, y, delay }: NodeProps) {
   return (
     <motion.div
       style={{
@@ -476,4 +477,4 @@ function Node({ label, img, x, y, delay }: NodeProps) {
       <div style={{ fontSize: 10, whiteSpace: "nowrap", opacity: 0.95 }}>{label}</div>
     </motion.div>
   );
-}
+});
