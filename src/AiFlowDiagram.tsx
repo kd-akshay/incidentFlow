@@ -1,15 +1,8 @@
-import React, { useMemo, useRef, useLayoutEffect, useState } from "react";
+import  { useMemo, useRef, useLayoutEffect, useState } from "react";
 import { motion } from "framer-motion";
+// import agentgif from '../assets/AgentStart.gif'
 
-/**
- Anchored layout:
- - Agent Started: center-left
- - Processing Data source: top-center-right
- - Analysing Incident: center-right
- - Generating Report: bottom-right
-
- Change anchors or container size, and lines/animations adapt automatically.
-*/
+// import processgif from '../assets/process.gif'
 
 type Anchor =
   | "top-left"
@@ -33,7 +26,6 @@ type NodeDef = {
   label: string;
   img: string;
   anchor: Anchor;
-  // Optional pixel offsets to fine-tune placement relative to anchor
   dx?: number;
   dy?: number;
 };
@@ -55,11 +47,7 @@ const ICON_H = 36;
 const HALF_W = ICON_W / 2;
 const HALF_H = ICON_H / 2;
 
-// Given a node center, return edge points where lines should connect
-const edgeTop = (n: { x: number; y: number }) => ({ x: n.x, y: n.y - HALF_H });
-const edgeBottom = (n: { x: number; y: number }) => ({ x: n.x, y: n.y + HALF_H });
-const edgeLeft = (n: { x: number; y: number }) => ({ x: n.x - HALF_W, y: n.y });
-const edgeRight = (n: { x: number; y: number }) => ({ x: n.x + HALF_W, y: n.y });
+
 
 
 export default function AiFlowDiagram() {
@@ -83,34 +71,34 @@ export default function AiFlowDiagram() {
     {
       key: "AGENT",
       label: "Agent Started",
-      img: "/agent.gif",
+      img: "../assets/AgentStart.gif",
       anchor: "center-left",
-      dx: 20, // Reduce left space even more by moving it further to the left
-      dy: -20, // Move it down slightly
+      dx: 20, 
+      dy: -20,
     },
     {
       key: "PROC",
-      label: "Processing Data source",
-      img: "/processing.gif",
+      label: "Processing Data Source",
+      img:"./assets/process.gif",
       anchor: "top-right",
+      dx: -120, 
       dy: 30,
-      dx: -120, // Reduce right space by moving more to the left
     },
     {
       key: "AN",
       label: "Analysing Incident",
-      img: "/analyzing.gif",
+      img: "./assets/process.gif",
       anchor: "center-right",
-      dx: -110, // Reduce right space by moving more to the left
-      dy: -20, // Shift up
+      dx: -108, 
+      dy: -20, 
     },
     {
       key: "REP",
       label: "Generating Report",
       img: "/report.gif",
       anchor: "bottom-right",
-      dx: -110, // Reduce right space by moving more to the left
-      dy: -80, // Shift down
+      dx: -108, 
+      dy: -60, 
     },
   ];
 
@@ -175,11 +163,11 @@ export default function AiFlowDiagram() {
   const AN = coords.AN;
   const RE = coords.REP;
 
-  // Timeline (based on your flow)
+  // Timeline (based on flow)
   const t1_agent_in = 0;
 
   // 2) Agent → Processing (L: up then right)
-  // We’ll animate as two segments: vertical then horizontal.
+  // animate as two segments: vertical then horizontal.
   // The vertical goes from Agent.y toward Processing.y directionally.
   const t2_up_start = t1_agent_in + T_NODE + GAP;
   const t2_up_end = t2_up_start + T_SEG;
@@ -212,7 +200,7 @@ export default function AiFlowDiagram() {
   // If nodes are too close, adjust the line path
   const AtoP_vert = {
     x1: AG.x + HALF_W + 15, // Start slightly more towards the right side of Agent node
-    y1: AG.y, // Start from center of Agent node
+    y1: AG.y-10, // Start from center of Agent node
     x2: AG.x + HALF_W + 15, // Keep vertical line shorter
     y2: PR.y + HALF_H, // End at bottom of Processing node (lower position)
   };
@@ -228,9 +216,9 @@ export default function AiFlowDiagram() {
   // Processing→Analyzing: vertical leg at PR.x from PR.y to AN.y
   const PtoA_vert = {
     x1: PR.x + 55, // Start more to the left of Processing node
-    y1: PR.y + HALF_H + 40, // Start even lower to make line shorter from top
+    y1: AN.y - HALF_H,// Start even lower to make line shorter from top
     x2: PR.x + 55, // End more to the left of Analyzing node
-    y2: AN.y - HALF_H, // End at top edge of Analyzing node
+    y2:  PR.y + HALF_H + 45, // End at top edge of Analyzing node
   };
 
   // Agent→Analyzing: horizontal at y=AN.y from AG.x to AN.x
@@ -245,9 +233,9 @@ export default function AiFlowDiagram() {
   // Analysing→Report: vertical at AN.x from AN.y to RE.y
   const AtoR_vert = {
     x1: AN.x + 45, // Shift slightly to the left
-    y1: AN.y + HALF_H + 50, // Start from top (Analyzing node)
+    y1: AN.y + HALF_H + 40,// Start from top (Analyzing node)
     x2: AN.x + 45, // Shift slightly to the left
-    y2: RE.y - HALF_H -10 // End at bottom (Report node)
+    y2:  RE.y - HALF_H +10,// End at bottom (Report node)
   };
 
   // Agent→Report L: vertical at AG.x from AG.y to RE.y, then horizontal at y=RE.y from AG.x to RE.x
@@ -275,8 +263,6 @@ export default function AiFlowDiagram() {
         maxHeight: 400,
         // aspectRatio: "920/800",
         margin: "0",
-        // background:
-        //   "radial-gradient(ellipse at 15% 75%, rgba(90,0,160,.22), transparent 60%), #0f1116",
         borderRadius: 12,
         overflow: "hidden",
         color: "#fff",
@@ -284,7 +270,6 @@ export default function AiFlowDiagram() {
       }}
     >
       <svg viewBox={`0 0 ${size.w} ${size.h}`} width="100%" height="100%">
-        {/* Animated segments (solid smooth draw, no dashes) */}
         {/* 2) Agent up then right to Processing */}
         <motion.line
           {...baseLine}
@@ -361,19 +346,12 @@ export default function AiFlowDiagram() {
           transition={{ duration: T_SEG, delay: t6_agent_right_start, ease: "easeInOut" }}
         />
 
-        {/* Optional corner dots (remove if not desired) */}
-        {/* {[
-          [AG.x, AG.y],
-          [AG.x, PR.y],
-          [PR.x, PR.y],
-          [PR.x, AN.y],
-          [AN.x, AN.y],
-          [AN.x, RE.y],
-          [AG.x, RE.y],
-          [RE.x, RE.y],
+        {/* corner dots (work in progress) */}
+        {[
+          [PR.y + HALF_H , PR.x + 30],
         ].map(([cx, cy], i) => (
           <circle key={i} cx={cx} cy={cy} r={3} fill="#fff" opacity={0.9} />
-        ))} */}
+        ))}
       </svg>
 
       {/* Nodes (GIFs + labels) with anchored placement */}
@@ -415,11 +393,11 @@ function Node({ label, img, x, y, delay }: NodeProps) {
       <img
         src={img}
         alt={label}
-        width={36}
-        height={36}
+        width={33}
+        height={33}
         style={{ 
           objectFit: "contain", 
-          filter: "drop-shadow(0 0 16px rgba(120,160,255,.6))",
+          //filter: "drop-shadow(0 0 16px rgba(120,160,255,.6))",
           display: "block" // Force display of GIF
         }}
         onError={(e) => {
